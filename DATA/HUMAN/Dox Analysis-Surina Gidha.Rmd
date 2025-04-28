@@ -1,0 +1,74 @@
+---
+title: "Dox Effect Analysis-Surina Gidha"
+author: "Surina Gidha"
+date: "2025-04-26"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Packages
+```
+library(tidyverse)
+library(dplyr)
+library(nloptr)
+library(IRanges)
+library(tidyr)
+library(readr)
+library(ggplot2)
+library(purrr)
+library(magrittr)
+library(pheatmap)
+library(textshape)
+library(Rcpp)
+library(DESeq2)
+```
+#Simplyfying data and rounding in order to get effects
+```
+counts <- read.delim("salmon.merged.gene_counts.tsv", row.names = 1)
+> num_samples <- ncol(counts) - 1
+> num_samples
+
+> condition_vector <- c(rep("Control", 20), rep("Dox", 19))
+> length(condition_vector)
+
+> sample_info <- data.frame(
++     row.names = colnames(gene_name)[-1],
++     condition = condition_vector
++ )
+
+> dds <- DESeqDataSetFromMatrix(countData = counts[, -1],  
++                               colData = sample_info,
++                               design = ~ condition)
+
+> dds <- DESeqDataSetFromMatrix(countData = counts_rounded, 
++                               colData = sample_info,
++                               design = ~ condition)
+
+> head(counts)
+> counts_rounded <- round(counts[, -c(1, 2)])
+> head(counts_rounded)
+```
+
+#Creating a heatmap
+```
+library(pheatmap)
+pheatmap(data,
+         clustering_distance_rows = "euclidean",
+         clustering_distance_cols = "euclidean",
+         clustering_method = "complete",
+         color = colorRampPalette(c("blue", "white", "red"))(100),
+         show_rownames = TRUE,
+         show_colnames = TRUE,
+         scale = "row")
+```        
+         
+![Heatmap of gene expression](https://fiji-viz-3.int.colorado.edu/s/48bb4562a35e0b1a1ae0f/file_show?path=%2Fscratch%2FShares%2Frinnclass%2FMASTER_CLASS%2FSTUDENTS%2FSurina%2FHuman+genes%2FHeatmap.png)
+
+
+#Conclusion
+``` 
+###The heatmap illustrates the effect of doxycycline (dox) treatment on human gene expression across different experimental conditions. Each row represents a distinct gene, while each column corresponds to a different sample or time point. The color scale indicates relative expression levels, with red showing upregulation and blue indicating downregulation. Following dox treatment, distinct clusters of genes exhibit coordinated changes in expression, suggesting that dox activates specific gene networks while repressing others. Overall, the data reveal that dox has a strong and structured impact on the transcriptional landscape of human cells.
+``` 
